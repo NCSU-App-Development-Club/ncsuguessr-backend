@@ -10,15 +10,18 @@ You will need to install [Docker Desktop](https://www.docker.com/products/docker
 
 ## Local development
 
-1. Install necessary dependencies using `npm install`.
-2. Ensure the postgres database is running (see database setup section)
-3. Start LocalStack (see S3 setup section)
-4. Set necessary environment variables (see config section)
-5. Run `npm run dev`, which will start the server with hot reloading
+1. Ensure that you have the [Prettier extension for vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) installed. This will automatically format your code whenver you save a file.
+2. Make sure your `node` version is correct by running `nvm use` from the root of this repository (same level as this README). If you do not have `nvm` installed, see the below section on `nvm`
+3. Install necessary dependencies using `npm install`
+4. Start docker desktop (must be running to use the docker CLI commands)
+5. Start a local instance of postgres via docker (see database setup section)
+6. Start LocalStack via docker (see S3 setup section)
+7. Set necessary environment variables (see config section)
+8. Run `npm run dev`, which will start the server with hot reloading
 
 ## Database setup
 
-To start a local instance of a postgres database, run `docker run -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=ncsuguessr -p 5432:5432 postgres:17`
+To start a local instance of a postgres database, run `docker run -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=ncsuguessr -p 5432:5432 postgres:17`. Note that the postgres version is 17--this is what will be used in production, and it is best to keep development and production environments as similar as possible.
 
 The above command initializes the password for the `postgres` user to be `postgres`. If you change this, be sure to also change the value of `POSTGRES_PASSWORD` in the `.env` file .
 
@@ -45,6 +48,12 @@ First, build the container using `docker build . -t <NAME>` from the root direct
 Run the container (NOTE: if using local postgres, set `DB_HOST` to `host.docker.internal` on Mac and Windows) using `docker run --rm -it --env-file <ENV_FILE> -p 3000:3000 <NAME>`
 
 TODO: how to use localstack with containerized app? (runs into networking problems)
+
+## NVM
+
+`nvm`, or node version manager, is a command line utility that helps install and manage multiple versions of node. We will be using it to ensure that everyone is using the same version of node. Please use [this guide](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/) to install `nvm` (or `nvm-windows` if you are on windows, but it should work the same).
+
+Not required, but if you are using zsh (default on mac, can be installed on linux), you can set up automatic `nvm` version switching. See [here](https://github.com/nvm-sh/nvm#zsh)
 
 # File structure
 
