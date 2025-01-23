@@ -4,7 +4,7 @@ A TypeScript + Express app used as the backend for [ncsuguessr](https://github.c
 
 # Setup
 
-## Prerequites
+## Prerequisites
 
 You will need to install [Docker Desktop](https://www.docker.com/products/docker-desktop/) to be able to run the database and S3 (object store) locally.
 
