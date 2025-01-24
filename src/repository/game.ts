@@ -1,8 +1,6 @@
-import { getSqlClient } from '.'
+import { sql } from '.'
 
 export const createGamesTable = async () => {
-  const sql = await getSqlClient
-
   await sql`CREATE TABLE IF NOT EXISTS games (
     id SERIAL PRIMARY KEY,
     image_id INTEGER NOT NULL REFERENCES images(id),

@@ -21,10 +21,14 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set Docker Tag
+        id: set-tag
+        run: echo "tag=${{ github.ref_name == 'main' && 'prod' || 'staging' }}" >> $GITHUB_ENV
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: |
-            ghcr.io/ncsu-app-development-club/ncsuguessr-backend:latest
+            ghcr.io/ncsu-app-development-club/ncsuguessr-backend:${{ env.tag }}
