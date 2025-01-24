@@ -24,4 +24,4 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/NCSU-App-Development-Club/ncsuguessr-backend:latest
+            ghcr.io/ncsu-app-development-club/ncsuguessr-backend:latest
