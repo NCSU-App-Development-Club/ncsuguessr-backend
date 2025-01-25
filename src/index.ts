@@ -5,7 +5,7 @@ config({})
 import bodyParser from 'body-parser'
 import express from 'express'
 import { createAllTables } from './repository'
-import { createBucket } from './util/s3'
+import { createBucket, putToS3 } from './util/s3'
 import { DeployEnv, getDeployEnv } from './util'
 import { logger } from './util'
 
@@ -25,6 +25,10 @@ app.use((req, res, next) => {
 
 app.get('/', async (req, res) => {
   res.send('Hello')
+})
+
+app.get('/test-s3-upload', async (req, res) => {
+  await putToS3('testing-s3', 'my content')
 })
 
 // initialization logic
