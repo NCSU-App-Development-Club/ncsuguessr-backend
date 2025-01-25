@@ -27,11 +27,6 @@ app.get('/', async (req, res) => {
   res.send('Hello')
 })
 
-app.get('/test-s3-upload', async (req, res) => {
-  await putToS3('testing-s3', 'my content')
-  res.send('uploaded')
-})
-
 // initialization logic
 const startApp = async () => {
   // sends a request to the database to create the necessary tables if they do not already exist
