@@ -29,6 +29,7 @@ app.get('/', async (req, res) => {
 
 app.get('/test-s3-upload', async (req, res) => {
   await putToS3('testing-s3', 'my content')
+  res.send('uploaded')
 })
 
 // initialization logic
