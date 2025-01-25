@@ -10,11 +10,11 @@ You will need to install [Docker Desktop](https://www.docker.com/products/docker
 
 ## Local development
 
-1. Ensure that you have the [Prettier extension for vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) installed. This will automatically format your code whenver you save a file.
-2. Make sure your `node` version is correct by running `nvm use` from the root of this repository (same level as this README). If you do not have `nvm` installed, see the below section on `nvm`
+1. Ensure that you have the [Prettier extension for vscode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) installed. This will automatically format your code whenever you save a file.
+2. Make sure your `node` version is correct by running `nvm install` and `nvm use` from the root of this repository (same level as this README). If you do not have `nvm` installed, see the below section on `nvm`
 3. Install necessary dependencies using `npm install`
 4. Start Docker Desktop (must be running to use the docker CLI commands)
-5. Start a local instances of Postgres and LocalStack bu running the following command: `docker compose up`
+5. Start local instances of Postgres and LocalStack by running the following command: `docker compose up`
 6. Set necessary environment variables (see config section)
 7. Run `npm run dev`, which will start the server with hot reloading
 
@@ -27,8 +27,6 @@ Running `docker compose up` will start two containers: one for Postgres, and one
 <!-- To start a local instance of a postgres database, run `docker run -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=ncsuguessr -p 5432:5432 postgres:17`. -->
 
 The Postgres container will be using Postgres version 17--this is what will be used in production, and it is best to keep development and production environments as similar as possible. The password for the `postgres` user will be set to `postgres`.
-
-TODO: cloud-based
 
 The production deployment will use a cloud-based instance of S3, but for development, it is easier (and cheaper) to use a local deployment through [LocalStack](https://docs.localstack.cloud/overview/), which allows you to run instances of various AWS services locally.
 Docker Compose will set this up for you.
@@ -47,7 +45,7 @@ First, build the container using `docker build . -t <NAME>` from the root direct
 
 Run the container (NOTE: if using local postgres, set `DB_HOST` to `host.docker.internal` on Mac and Windows) using `docker run --rm -it --env-file <ENV_FILE> -p 3000:3000 <NAME>`
 
-TODO: how to use localstack with containerized app? (runs into networking problems)
+<!-- TODO: how to use localstack with containerized app? (runs into networking problems) -->
 
 ## NVM
 
