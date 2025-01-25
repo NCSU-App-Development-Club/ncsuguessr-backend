@@ -16,8 +16,6 @@ services:
     ports:
       - '4566:4566'
       - '4510-4559:4510-4559'
-    environment:
-      - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
       - ncsuguessr-localstack-volume:/var/lib/localstack
       - /var/run/docker.sock:/var/run/docker.sock
