@@ -2,9 +2,11 @@ import {
   S3Client,
   GetObjectCommand,
   CreateBucketCommand,
+  PutObjectCommand,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { DeployEnv, getDeployEnv } from '.'
+import { Readable } from 'stream'
 
 const s3 = new S3Client()
 
@@ -40,4 +42,17 @@ export const generateGetSignedUrl = async (
 
   const signedUrl = await getSignedUrl(s3, command, { expiresIn })
   return signedUrl
+}
+
+export const putToS3 = async (
+  key: string,
+  content: string | Uint8Array | Buffer | Readable
+) => {
+  const command = new PutObjectCommand({
+    Bucket: s3BucketName,
+    Key: key,
+    Body: content,
+  })
+
+  await s3.send(command)
 }

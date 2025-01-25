@@ -1,9 +1,7 @@
-import { getSqlClient } from '.'
+import { sql } from '.'
 import { ImageRow, NewImageType } from '../models/image'
 
 export const createImagesTable = async () => {
-  const sql = await getSqlClient
-
   await sql`CREATE TABLE IF NOT EXISTS images (
     id SERIAL PRIMARY KEY,
     file_location CHAR(30) NOT NULL,
@@ -16,8 +14,6 @@ export const createImagesTable = async () => {
 }
 
 export const insertImage = async (image: NewImageType) => {
-  const sql = await getSqlClient
-
   const [inserted] = await sql`INSERT INTO images ${sql([image])} RETURNING *`
 
   return ImageRow.parse(inserted)
