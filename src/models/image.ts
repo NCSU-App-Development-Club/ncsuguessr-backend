@@ -8,6 +8,7 @@ export const ImageRow = z.object({
   description: z.string(),
   takenAt: z.date(),
   validated: z.boolean(),
+  locationName: z.string(),
 })
 
 export type ImageRowType = z.infer<typeof ImageRow>
