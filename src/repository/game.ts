@@ -1,5 +1,6 @@
 import { sql } from '.'
 
+// NOTE: this must be kept in sync with game model
 export const createGamesTable = async () => {
   await sql`CREATE TABLE IF NOT EXISTS games (
     id SERIAL PRIMARY KEY,

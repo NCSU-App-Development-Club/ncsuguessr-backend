@@ -1,6 +1,7 @@
 import { sql } from '.'
 import { ImageRow, NewImageType } from '../models/image'
 
+// NOTE: this must be in sync with image model
 export const createImagesTable = async () => {
   await sql`CREATE TABLE IF NOT EXISTS images (
     id SERIAL PRIMARY KEY,

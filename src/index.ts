@@ -8,6 +8,8 @@ import { createAllTables } from './repository'
 import { createBucket, putToS3 } from './util/s3'
 import { DeployEnv, getDeployEnv } from './util'
 import { logger } from './util'
+import { gameRouter } from './routes/game'
+import { imageRouter } from './routes/image'
 
 // the primary construct representing the app--routes and middleware will be added using `app`
 const app = express()
@@ -26,6 +28,12 @@ app.use((req, res, next) => {
 app.get('/', async (req, res) => {
   res.send('Hello')
 })
+
+// TODO: need to protect admin routes with a token
+
+app.use('/games', gameRouter)
+
+app.use('/images', imageRouter)
 
 // initialization logic
 const startApp = async () => {
