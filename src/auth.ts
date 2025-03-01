@@ -9,7 +9,10 @@ export const adminAuthMiddleware = async (
   // authorization header should be of the form `ApiKey {token}`
   const authHeader = req.headers.authorization
   if (authHeader === undefined || !authHeader?.startsWith('ApiKey ')) {
-    return res.status(401).json({ error: 'Unauthorized: Missing API key' }), undefined
+    return (
+      res.status(401).json({ error: 'Unauthorized: Missing API key' }),
+      undefined
+    )
   }
 
   const receivedToken = authHeader.slice(7)
