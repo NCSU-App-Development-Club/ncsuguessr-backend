@@ -10,3 +10,24 @@ export const GameRow = z.object({
 })
 
 export type GameRowType = z.infer<typeof GameRow>
+
+export const NewGame = GameRow.omit({
+  id: true,
+}).extend({
+  plays: z.literal(0),
+  totalDist: z.literal(0),
+})
+
+export type NewGameType = z.infer<typeof NewGame>
+
+export const GameRows = z.array(GameRow)
+
+export type GameRowsType = z.infer<typeof GameRows>
+
+export const GameDate = GameRow.pick({ date: true })
+
+export type GameDateType = z.infer<typeof GameDate>
+
+export const GameDates = z.array(GameDate)
+
+export type GameDatesType = z.infer<typeof GameDates>

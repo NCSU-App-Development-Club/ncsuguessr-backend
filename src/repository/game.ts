@@ -1,4 +1,11 @@
 import { sql } from '.'
+import {
+  GameDates,
+  GameDatesType,
+  GameRow,
+  GameRowType,
+  NewGameType,
+} from '../models/game'
 
 // NOTE: this must be kept in sync with game model
 export const createGamesTable = async () => {
@@ -11,8 +18,28 @@ export const createGamesTable = async () => {
   )`
 }
 
-// TODO: insert a game, given image id and date
+export const insertGame = async (game: NewGameType): Promise<GameRowType> => {
+  const [inserted] = await sql`INSERT INTO games ${sql([game])} RETURNING *`
 
-// TODO: get a single game based on date
+  return GameRow.parse(inserted)
+}
 
-// TODO: get all dates
+export const getGameByDate = async (
+  date: Date
+): Promise<GameRowType | null> => {
+  // TODO: works?
+  const games = await sql`SELECT * FROM games WHERE date = ${date}`
+
+  if (games.length === 0) {
+    return null
+  }
+
+  return GameRow.parse(games[0])
+}
+
+export const getGameDates = async (): Promise<GameDatesType> => {
+  const dates = await sql`SELECT date FROM games`
+
+  // TODO: works? this assumes they are z.date()s
+  return GameDates.parse(dates)
+}
