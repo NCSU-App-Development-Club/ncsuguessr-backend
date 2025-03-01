@@ -1,8 +1,6 @@
 import { z } from 'zod'
 
-// TODO: zod-based DTOs for any routes that return JSON data
-
-export const ImageSubmissionSchema = z.object({
+export const ImageSubmissionFormSchema = z.object({
   latitude: z.string().transform(Number),
   longitude: z.string().transform(Number),
   description: z.string(),
@@ -10,4 +8,8 @@ export const ImageSubmissionSchema = z.object({
   locationName: z.string(),
 })
 
-export type ImageSubmission = z.infer<typeof ImageSubmissionSchema>
+export type ImageSubmissionForm = z.infer<typeof ImageSubmissionFormSchema>
+
+export const ErrorResponseBody = z.object({
+  error: z.string().optional(),
+})

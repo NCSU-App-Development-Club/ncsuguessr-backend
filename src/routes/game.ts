@@ -1,8 +1,9 @@
 import express from 'express'
 import { adminAuthMiddleware } from '../auth'
 import { z } from 'zod'
-import { ImageRowType } from '../models/image'
-import { getGamesByDate, insertGame } from '../repository/game'
+import { getGameByDate, getGames, insertGame } from '../repository/game'
+import { getImage } from '../repository/image'
+import { logger } from '../util'
 
 export const CreateGameRequestBody = z.object({
   imageId: z.number(),
@@ -11,11 +12,6 @@ export const CreateGameRequestBody = z.object({
     .transform((val) => new Date(val))
     .refine((val) => (val ? !isNaN(val.getTime()) : true)),
 })
-
-const getImage = async (imageId: number): Promise<ImageRowType | null> => {
-  // TODO:
-  return null
-}
 
 export const gameRouter = express.Router()
 
@@ -51,8 +47,7 @@ gameRouter.post('/', adminAuthMiddleware, async (req, res) => {
 
     res.status(200).send(createdGame)
   } catch (e) {
-    // TODO: how to log
-    console.error(e)
+    logger.error(`failed to create game ${e}`)
     res.status(500).send({ error: `${e}` })
   }
 })
@@ -65,13 +60,14 @@ const GetGamesSearchParams = z.object({
     .refine((val) => (val ? !isNaN(val.getTime()) : true)),
 })
 
+// TODO: protect getting all routes? perhaps add separate /games-admin router
 gameRouter.get('/', async (req, res) => {
   const parsedSearchParams = GetGamesSearchParams.safeParse(req.query)
 
   if (parsedSearchParams.error) {
     return (
       res.status(400).send({
-        error: `bad search params: ${parsedSearchParams.error.message}`,
+        error: `invalid search params: ${parsedSearchParams.error.message}`,
       }),
       undefined
     )
@@ -79,19 +75,31 @@ gameRouter.get('/', async (req, res) => {
 
   const searchedParams = parsedSearchParams.data
 
-  if (!searchedParams.date) {
-    return (
-      res.status(400).send({ error: 'missing date in search parameters' }),
-      undefined
-    )
-  }
+  if (searchedParams.date) {
+    // return only games on given date
+    try {
+      const game = await getGameByDate(searchedParams.date)
 
-  try {
-    const games = await getGamesByDate(searchedParams.date)
+      if (game === null) {
+        res
+          .status(404)
+          .send({ error: `no game on ${searchedParams.date} found` })
+      } else {
+        res.status(200).send({ game })
+      }
+    } catch (e) {
+      logger.error(`failed to get game by date: ${e}`)
+      res.status(500).send({ error: `failed to get games from db` })
+    }
+  } else {
+    // return all games
+    try {
+      const games = await getGames()
 
-    res.status(200).send({ games })
-  } catch (e) {
-    console.error(e)
-    res.status(500).send({ error: `${e}` })
+      res.status(200).send({ games })
+    } catch (e) {
+      logger.error(`failed to get all games: ${e}`)
+      res.status(500).send({ error: `failed to get games from db` })
+    }
   }
 })
