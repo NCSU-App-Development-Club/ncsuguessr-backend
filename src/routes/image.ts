@@ -12,6 +12,7 @@ import { ImageRowsType } from '../models/image'
 import { NewImageType } from '../models/image'
 import { toCamelCaseBody } from '../util/routes'
 import { generateGetSignedUrl, putToS3 } from '../util/s3'
+import { randomUUID } from 'node:crypto'
 
 const storage = multer.memoryStorage()
 const upload = multer({ storage })
@@ -24,7 +25,7 @@ imageRouter.post('/', upload.single('image'), async (req, res) => {
   if (!ImageSubmissionSchema.safeParse(pre).success || !req.file)
     return res.status(400).send('error'), undefined
 
-  const fileLocation = 'example/location'
+  const fileLocation = randomUUID().trim()
 
   // Add to S3
   try {
@@ -34,17 +35,20 @@ imageRouter.post('/', upload.single('image'), async (req, res) => {
   }
 
   // Add to SQL
-  const body: ImageSubmission = req.body
+  const body: ImageSubmission = pre
   const newImage: NewImageType = {
     ...body,
     fileLocation,
     validated: false,
   }
 
+  console.log(newImage)
+
   try {
     const result = await insertImage(newImage)
     res.status(200).send(result)
-  } catch {
+  } catch (e) {
+    console.log(e)
     res.status(500).send("couldn't write to db")
   }
 })
@@ -65,7 +69,8 @@ imageRouter.get('/', async (req, res) => {
 // TODO: route to generate a presigned url for getting a specific image from s3 by id
 imageRouter.get('/:imageId', async (req, res) => {
   const imageId = parseInt(req.params.imageId)
-  if (isNaN(imageId)) return res.status(400).send('bad image id'), undefined
+  if (isNaN(imageId) || imageId.toString() !== req.params.imageId)
+    return res.status(400).send('bad image id'), undefined
 
   let imageKey
   try {
@@ -74,11 +79,12 @@ imageRouter.get('/:imageId', async (req, res) => {
     return res.status(500).send("couldn't get image key"), undefined
   }
 
+  if (!imageKey)
+    return res.status(500).send("couldn't get image key"), undefined
+
+  console.log(imageKey)
   try {
-    const signedUrl = await generateGetSignedUrl(
-      imageKey.fileLocation,
-      60000000
-    )
+    const signedUrl = await generateGetSignedUrl(imageKey.fileLocation, 60000)
     res.status(200).send(signedUrl)
   } catch {
     res.status(500).send('error fetching URL')
