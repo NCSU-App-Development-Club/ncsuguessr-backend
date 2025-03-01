@@ -3,6 +3,7 @@ import {
   GameDates,
   GameDatesType,
   GameRow,
+  GameRows,
   GameRowType,
   NewGameType,
 } from '../models/game'
@@ -12,7 +13,7 @@ export const createGamesTable = async () => {
   await sql`CREATE TABLE IF NOT EXISTS games (
     id SERIAL PRIMARY KEY,
     image_id INTEGER NOT NULL REFERENCES images(id),
-    date DATE NOT NULL,
+    date DATE NOT NULL UNIQUE,
     plays INTEGER NOT NULL,
     total_dist INTEGER NOT NULL
   )`
@@ -27,7 +28,6 @@ export const insertGame = async (game: NewGameType): Promise<GameRowType> => {
 export const getGameByDate = async (
   date: Date
 ): Promise<GameRowType | null> => {
-  // TODO: works?
   const games = await sql`SELECT * FROM games WHERE date = ${date}`
 
   if (games.length === 0) {
@@ -40,6 +40,11 @@ export const getGameByDate = async (
 export const getGameDates = async (): Promise<GameDatesType> => {
   const dates = await sql`SELECT date FROM games`
 
-  // TODO: works? this assumes they are z.date()s
   return GameDates.parse(dates)
+}
+
+export const getGames = async (): Promise<GameRowType[]> => {
+  const games = await sql`SELECT * FROM GAMES`
+
+  return GameRows.parse(games)
 }

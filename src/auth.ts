@@ -6,11 +6,11 @@ export const adminAuthMiddleware = async (
   res: express.Response,
   next: express.NextFunction
 ): Promise<void> => {
-  // authorization header should be of the form `ApiKey {token}`
+  // authorization header should be of the form `Bearer {token}`
   const authHeader = req.headers.authorization
-  if (authHeader === undefined || !authHeader?.startsWith('ApiKey ')) {
+  if (authHeader === undefined || !authHeader?.startsWith('Bearer ')) {
     return (
-      res.status(401).json({ error: 'Unauthorized: Missing API key' }),
+      res.status(401).send({ error: 'unauthorized: missing auth token' }),
       undefined
     )
   }
@@ -20,7 +20,7 @@ export const adminAuthMiddleware = async (
   const trueToken = getAdminSecretToken()
 
   if (receivedToken !== trueToken) {
-    return res.status(403).json({ error: 'Invalid API key' }), undefined
+    return res.status(403).send({ error: 'invalid auth token' }), undefined
   }
 
   next()
