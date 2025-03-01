@@ -15,3 +15,14 @@ export const getDeployEnv = (): DeployEnvType => {
 
   return DeployEnv.parse(env)
 }
+
+export const getAdminSecretToken = (): string => {
+  const name = `ADMIN_SECRET_TOKEN`
+  const token = process.env[name]
+
+  if (!token) {
+    throw new Error(`no ${name} found`)
+  }
+
+  return token
+}
