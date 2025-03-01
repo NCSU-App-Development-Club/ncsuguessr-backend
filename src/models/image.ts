@@ -17,3 +17,7 @@ export type ImageRowType = z.infer<typeof ImageRow>
 export const NewImage = ImageRow.omit({ id: true })
 
 export type NewImageType = z.infer<typeof NewImage>
+
+export const ImageRows = z.array(ImageRow)
+
+export type ImageRowsType = z.infer<typeof ImageRows>
