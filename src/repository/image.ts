@@ -11,12 +11,13 @@ import {
 export const createImagesTable = async () => {
   await sql`CREATE TABLE IF NOT EXISTS images (
     id SERIAL PRIMARY KEY,
-    file_location CHAR(30) NOT NULL,
+    file_location CHAR(36) NOT NULL,
     latitude DOUBLE PRECISION NOT NULL,
     longitude DOUBLE PRECISION NOT NULL,
     description TEXT NOT NULL,
     taken_at TIMESTAMP NOT NULL,
-    validated BOOLEAN NOT NULL
+    validated BOOLEAN NOT NULL,
+    location_name VARCHAR(50) NOT NULL
   )`
 }
 
@@ -26,6 +27,18 @@ export const insertImage = async (
   const [inserted] = await sql`INSERT INTO images ${sql([image])} RETURNING *`
 
   return ImageRow.parse(inserted)
+}
+
+export const getImage = async (
+  imageId: number
+): Promise<ImageRowType | null> => {
+  const images = await sql`SELECT * FROM images WHERE id = ${imageId}`
+
+  if (images.length === 0) {
+    return null
+  }
+
+  return ImageRow.parse(images[0])
 }
 
 // admin

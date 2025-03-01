@@ -26,3 +26,11 @@ export const getAdminSecretToken = (): string => {
 
   return token
 }
+
+export const camelToSnake = (str: string): string => {
+  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
+}
+
+export const kebabToSnake = (str: string): string => {
+  return str.replace(/-/g, '_')
+}
