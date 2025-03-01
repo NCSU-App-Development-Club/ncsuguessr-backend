@@ -28,6 +28,12 @@ export const insertImage = async (
   return ImageRow.parse(inserted)
 }
 
+export const getImage = async (imageId: number): Promise<ImageRowType> => {
+  const [inserted] = await sql`SELECT * FROM images WHERE id = ${imageId}`
+
+  return ImageRow.parse(inserted)
+}
+
 // admin
 export const validateImage = async (imageId: number): Promise<ImageRowType> => {
   const [updated] =

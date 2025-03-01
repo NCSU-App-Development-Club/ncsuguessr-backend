@@ -1,9 +1,14 @@
 import express from 'express'
 import multer from 'multer'
 
-import { insertImage } from '../repository/image'
+import {
+  getImage,
+  getUnvalidatedImages,
+  insertImage,
+} from '../repository/image'
 
 import { ImageSubmission, ImageSubmissionSchema } from '../dto'
+import { ImageRowsType } from '../models/image'
 import { NewImageType } from '../models/image'
 import { toCamelCaseBody } from '../util/routes'
 import { generateGetSignedUrl, putToS3 } from '../util/s3'
@@ -46,8 +51,15 @@ imageRouter.post('/', upload.single('image'), async (req, res) => {
 
 // TODO: route to get all non-validated images that have not been used for games (just data, not actual images)
 // (admin)
-imageRouter.get('/', (req, res) => {
+imageRouter.get('/', async (req, res) => {
   // TODO: query params to control which games are returned and which fields should be included
+  let unvalidatedImages: ImageRowsType
+  try {
+    unvalidatedImages = await getUnvalidatedImages()
+    res.status(200).send(unvalidatedImages)
+  } catch {
+    res.status(500).send('failed to fetch unvalidated images')
+  }
 })
 
 // TODO: route to generate a presigned url for getting a specific image from s3 by id
@@ -55,12 +67,20 @@ imageRouter.get('/:imageId', async (req, res) => {
   const imageId = parseInt(req.params.imageId)
   if (isNaN(imageId)) return res.status(400).send('bad image id'), undefined
 
-  // let imageKey
-  // try {
-  //   imageKey = await getImageKey(imageId)
-  // } catch {
-  //   return res.status(500).send("couldn't get image key"), undefined
-  // }
+  let imageKey
+  try {
+    imageKey = await getImage(imageId)
+  } catch {
+    return res.status(500).send("couldn't get image key"), undefined
+  }
 
-  // generateGetSignedUrl(imageKey)
+  try {
+    const signedUrl = await generateGetSignedUrl(
+      imageKey.fileLocation,
+      60000000
+    )
+    res.status(200).send(signedUrl)
+  } catch {
+    res.status(500).send('error fetching URL')
+  }
 })
