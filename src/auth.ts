@@ -10,7 +10,7 @@ export const adminAuthMiddleware = async (
   const authHeader = req.headers.authorization
   if (authHeader === undefined || !authHeader?.startsWith('ApiKey ')) {
     return (
-      res.status(401).json({ error: 'Unauthorized: Missing API key' }),
+      res.status(401).send({ error: 'Unauthorized: Missing API key' }),
       undefined
     )
   }
@@ -20,7 +20,7 @@ export const adminAuthMiddleware = async (
   const trueToken = getAdminSecretToken()
 
   if (receivedToken !== trueToken) {
-    return res.status(403).json({ error: 'Invalid API key' }), undefined
+    return res.status(403).send({ error: 'Invalid API key' }), undefined
   }
 
   next()
