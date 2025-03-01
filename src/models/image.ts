@@ -3,13 +3,13 @@ import { z } from 'zod'
 // NOTE: this must be kept in sync with image table definition
 export const ImageRow = z.object({
   id: z.number(),
-  fileLocation: z.string().max(30),
+  fileLocation: z.string().max(36),
   latitude: z.number(),
   longitude: z.number(),
   description: z.string(),
   takenAt: z.date(),
   validated: z.boolean(),
-  locationName: z.string(),
+  locationName: z.string().max(100),
 })
 
 export type ImageRowType = z.infer<typeof ImageRow>
