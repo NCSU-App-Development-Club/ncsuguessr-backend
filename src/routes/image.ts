@@ -20,7 +20,6 @@ export const imageRouter = express.Router()
 
 // takes an image in the body, uploads it to s3, and adds it to the database--ensure that it acts like a transaction
 imageRouter.post('/', upload.single('image'), async (req, res) => {
-  console.log('create image request', req)
   const pre: any = toCamelCaseBody(req.body)
   const parsedImageBody = ImageSubmissionFormSchema.safeParse(pre)
   if (parsedImageBody.error || !req.file) {
