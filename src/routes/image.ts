@@ -9,13 +9,14 @@ import { ImageRowType, NewImageType, ImageRowsType } from '../models/image'
 import { toCamelCaseBody } from '../util/routes'
 import { generateGetSignedUrl, putToS3 } from '../util/s3'
 import { randomUUID } from 'node:crypto'
-import { adminAuthMiddleware } from '../auth'
+import { adminAuthMiddleware } from '../middleware/auth'
 import {
   ErrorResponseBodyType,
   ImageSubmissionForm,
   ImageSubmissionFormType,
 } from '../dto'
 import { logger } from '../util'
+import { camelCaseBodyMiddleware } from '../middleware/transform'
 
 const fileFilter = (
   req: Request,
@@ -43,6 +44,7 @@ export const imageRouter = express.Router()
 imageRouter.post(
   '/',
   upload.single('image'),
+  camelCaseBodyMiddleware,
   async (
     req: Request<{}, {}, ImageSubmissionFormType>,
     res: Response<ImageRowType | ErrorResponseBodyType>
@@ -55,8 +57,7 @@ imageRouter.post(
         undefined
       )
     }
-    const pre = toCamelCaseBody(req.body)
-    const parsedImageBody = ImageSubmissionForm.safeParse(pre)
+    const parsedImageBody = ImageSubmissionForm.safeParse(req.body)
     if (parsedImageBody.error) {
       return (
         res.status(400).send({
@@ -85,8 +86,6 @@ imageRouter.post(
       fileLocation,
       validated: false,
     }
-
-    console.log(newImage)
 
     try {
       const result = await insertImage(newImage)

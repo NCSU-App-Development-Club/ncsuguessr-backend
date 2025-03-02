@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAdminSecretToken } from './util'
+import { getAdminSecretToken } from '../util'
 
 export const adminAuthMiddleware = async (
   req: express.Request,

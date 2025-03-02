@@ -1,5 +1,5 @@
 import express from 'express'
-import { adminAuthMiddleware } from '../auth'
+import { adminAuthMiddleware } from '../middleware/auth'
 import { z } from 'zod'
 import { getGameByDate, getGames, insertGame } from '../repository/game'
 import { getImage } from '../repository/image'
