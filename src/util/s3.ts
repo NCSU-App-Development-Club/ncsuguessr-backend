@@ -3,6 +3,7 @@ import {
   GetObjectCommand,
   CreateBucketCommand,
   PutObjectCommand,
+  DeleteObjectCommand,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { DeployEnv, getDeployEnv } from '.'
@@ -52,6 +53,15 @@ export const putToS3 = async (
     Bucket: s3BucketName,
     Key: key,
     Body: content,
+  })
+
+  await s3.send(command)
+}
+
+export const deleteFromS3 = async (key: string) => {
+  const command = new DeleteObjectCommand({
+    Bucket: s3BucketName,
+    Key: key,
   })
 
   await s3.send(command)

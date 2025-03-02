@@ -7,7 +7,7 @@ import {
 } from '../repository/image'
 import { ImageRowType, NewImageType, ImageRowsType } from '../models/image'
 import { toCamelCaseBody } from '../util/routes'
-import { generateGetSignedUrl, putToS3 } from '../util/s3'
+import { deleteFromS3, generateGetSignedUrl, putToS3 } from '../util/s3'
 import { randomUUID } from 'node:crypto'
 import { adminAuthMiddleware } from '../middleware/auth'
 import {
@@ -40,7 +40,8 @@ const upload = multer({ fileFilter, storage, limits })
 export const imageRouter = express.Router()
 
 // Takes an image in the body, uploads it to s3, and adds it to the database.
-// Ensure that it acts like a transaction
+// If s3 put fails, nothing is written to db. If s3 put succeeds and db write
+// fails, attempts delete object from s3.
 imageRouter.post(
   '/',
   upload.single('image'),
@@ -89,11 +90,20 @@ imageRouter.post(
 
     try {
       const result = await insertImage(newImage)
-      res.status(200).send(result)
+      return res.status(200).send(result), undefined
     } catch (e) {
       logger.error(`error inserting image into db: ${e}`)
-      res.status(500).send({ error: "Couldn't write to DB." })
     }
+
+    // rollback s3 insertion if db write fails
+    try {
+      await deleteFromS3(fileLocation)
+    } catch (e) {
+      logger.warn(
+        `orphaned element in S3 with key: ${fileLocation}. s3 error: ${e}`
+      )
+    }
+    res.status(500).send({ error: "Couldn't write to DB." })
   }
 )
 
