@@ -1,38 +1,9 @@
 {
-  "name": "ncsuguessr-backend",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "dev": "nodemon",
-    "build": "tsc",
-    "test": "jest",
-    "start": "node dist/index.js",
-    "check": "npx prettier . --check",
-    "format": "npx prettier . --write"
-  },
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "@types/express": "^5.0.0",
-    "@types/jest": "^29.5.14",
-    "@types/multer": "^1.4.12",
-    "@types/node": "^22.10.6",
-    "nodemon": "^3.1.9",
-    "prettier": "^3.4.2",
-    "ts-jest": "^29.2.6",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
-  },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.731.1",
-    "@aws-sdk/s3-request-presigner": "^3.731.1",
-    "body-parser": "^1.20.3",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "multer": "^1.4.5-lts.1",
-    "pino": "^9.6.0",
-    "postgres": "^3.4.5",
-    "zod": "^3.24.1"
+    "@hono/swagger-ui": "^0.5.1",
+    "@hono/zod-openapi": "^0.19.2",
+    "@scalar/hono-api-reference": "^0.5.178",
+    "hono": "^4.7.2",
+    "zod": "^3.24.2"
   }
 }
