@@ -1,4 +1,16 @@
 services:
+  # express:
+  #   build: .
+  #   container_name: express
+  #   env_file: .env.docker
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     postgres:
+  #       condition: service_started
+  #     localstack:
+  #       condition: service_healthy
+
   postgres:
     image: postgres:17
     container_name: postgres
@@ -13,9 +25,12 @@ services:
   localstack:
     image: localstack/localstack:4.0.3
     container_name: localstack
+    hostname: localstack
     ports:
       - '4566:4566'
       - '4510-4559:4510-4559'
+    environment:
+      - LOCALSTACK_HOST=localstack
     volumes:
       - ncsuguessr-localstack-volume:/var/lib/localstack
       - /var/run/docker.sock:/var/run/docker.sock
