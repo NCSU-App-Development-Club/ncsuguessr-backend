@@ -1,10 +1,19 @@
 import { z } from 'zod'
 
 export const ImageSubmissionForm = z.object({
-  latitude: z.string().transform(Number),
-  longitude: z.string().transform(Number),
+  latitude: z
+    .string()
+    .transform(Number)
+    .refine((v) => !isNaN(v)),
+  longitude: z
+    .string()
+    .transform(Number)
+    .refine((v) => !isNaN(v)),
   description: z.string(),
-  takenAt: z.string().transform((val) => new Date(val)),
+  takenAt: z
+    .string()
+    .transform((val) => new Date(val))
+    .refine((val) => (val ? !isNaN(val.getTime()) : true)),
   locationName: z.string(),
 })
 

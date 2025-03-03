@@ -48,27 +48,25 @@ export const imageRouter = express.Router()
 /**
  * @swagger
  *
- * /images/:
+ * /api/v1/images/:
  *   post:
- *     summary: Endpoint for submitting a new unvalidated image for review.
+ *     summary: Submits a new unvalidated image for review.
  *     responses:
  *       "200":
  *         description: Success.
  *       "400":
- *         description: "Bad request - invalid request body."
+ *         description: Invalid request body.
  *       "500":
  *         description: Error uploading to S3 or writing to DB.
  *     requestBody:
- *       description: Optional description in *Markdown*
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: "#/dto/ImageSubmissionFormType"
- *         image/*:
- *           schema:
- *             type: string
- *             format: binary
+ *             $ref: "#/components/schemas/ImageSubmissionForm"
+ *           encoding:
+ *             image:
+ *               contentType: image/*
  */
 imageRouter.post(
   '/',
@@ -140,7 +138,7 @@ imageRouter.post(
 /**
  * @swagger
  *
- * /images/:
+ * /api/v1/images/:
  *   get:
  *     summary: Gets all non-validated images.
  *     security:
@@ -195,6 +193,27 @@ imageRouter.get(
 )
 
 // Route to generate a presigned URL for getting a specific image from s3 by ID.
+/**
+ * @swagger
+ *
+ * /api/v1/images/{imageId}/url:
+ *   get:
+ *     summary: Fetches a signed URL for an image by its ID.
+ *     parameters:
+ *     - in: path
+ *       name: imageId
+ *       schema:
+ *         type: integer
+ *       required: true
+ *       description: ID of the image to fetch a signed URL for.
+ *     responses:
+ *       "200":
+ *         description: Success.
+ *       "400":
+ *         description: Invalid image ID.
+ *       "500":
+ *         description: Error getting image key or fetching signed URL.
+ */
 imageRouter.get(
   '/:imageId/url',
   async (
@@ -217,10 +236,10 @@ imageRouter.get(
 
     if (!imageKey)
       return (
-        res.status(500).send({ error: "Couldn't get image key." }), undefined
+        res.status(404).send({ error: `Image with ID ${imageId} not found.` }),
+        undefined
       )
 
-    console.log(imageKey)
     try {
       const signedUrl = await generateGetSignedUrl(imageKey.fileLocation, 60000)
       res.status(200).send({ signedUrl })

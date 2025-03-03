@@ -23,10 +23,11 @@ const options = {
             'latitude',
             'longitude',
             'description',
-            'taken-at',
-            'location-name',
+            'takenAt',
+            'locationName',
+            'image',
           ],
-          proerties: {
+          properties: {
             latitude: {
               type: 'string',
             },
@@ -36,11 +37,15 @@ const options = {
             description: {
               type: 'string',
             },
-            'taken-at': {
+            takenAt: {
               type: 'string',
             },
-            'location-name': {
+            locationName: {
               type: 'string',
+            },
+            image: {
+              type: 'string',
+              format: 'binary',
             },
           },
         },

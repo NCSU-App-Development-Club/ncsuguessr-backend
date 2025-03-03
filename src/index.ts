@@ -34,9 +34,9 @@ app.get('/', async (req, res) => {
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)) // Swagger UI
 // TODO: need to protect admin routes with a token
 
-app.use('/games', gameRouter)
+app.use('/api/v1/games', gameRouter)
 
-app.use('/images', imageRouter)
+app.use('/api/v1/images', imageRouter)
 
 // initialization logic
 const startApp = async () => {
