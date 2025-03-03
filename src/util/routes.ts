@@ -5,7 +5,9 @@ export const camelize = (s: string): string => {
 export const toCamelCaseBody = (body: Record<string, any>) => {
   const newObj: Record<string, any> = {}
   for (const [key, value] of Object.entries(body)) {
-    newObj[camelize(key)] = value
+    if (typeof value === 'object')
+      newObj[camelize(key)] = toCamelCaseBody(value)
+    else newObj[camelize(key)] = value
   }
   return newObj
 }
