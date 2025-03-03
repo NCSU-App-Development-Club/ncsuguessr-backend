@@ -9,28 +9,12 @@ export const ImageSubmissionForm = {
     'image',
   ],
   properties: {
-    latitude: {
-      type: 'string',
-      format: 'number',
-    },
-    longitude: {
-      type: 'string',
-      format: 'number',
-    },
-    description: {
-      type: 'string',
-    },
-    takenAt: {
-      type: 'string',
-      format: 'date',
-    },
-    locationName: {
-      type: 'string',
-    },
-    image: {
-      type: 'string',
-      format: 'binary',
-    },
+    latitude: { type: 'string', format: 'number' },
+    longitude: { type: 'string', format: 'number' },
+    description: { type: 'string' },
+    takenAt: { type: 'string', format: 'date' },
+    locationName: { type: 'string' },
+    image: { type: 'string', format: 'binary' },
   },
 }
 
@@ -47,30 +31,13 @@ export const Image = {
     'locationName',
   ],
   properties: {
-    id: {
-      type: 'integer',
-    },
-    fileLocation: {
-      type: 'string',
-    },
-    latitude: {
-      type: 'number',
-    },
-    longitude: {
-      type: 'number',
-    },
-    description: {
-      type: 'string',
-    },
-    takenAt: {
-      type: 'string',
-      format: 'date',
-    },
-    validated: {
-      type: 'boolean',
-    },
-    locationName: {
-      type: 'string',
-    },
+    id: { type: 'integer' },
+    fileLocation: { type: 'string' },
+    latitude: { type: 'number' },
+    longitude: { type: 'number' },
+    description: { type: 'string' },
+    takenAt: { type: 'string', format: 'date' },
+    validated: { type: 'boolean' },
+    locationName: { type: 'string' },
   },
 }
