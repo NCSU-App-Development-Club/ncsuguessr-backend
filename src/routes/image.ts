@@ -45,6 +45,43 @@ export const imageRouter = express.Router()
 // Takes an image in the body, uploads it to s3, and adds it to the database.
 // If s3 put fails, nothing is written to db. If s3 put succeeds and db write
 // fails, attempts delete object from s3.
+/**
+ * @swagger
+ *
+ * /api/v1/images/:
+ *   post:
+ *     summary: Submits a new unvalidated image for review.
+ *     tags:
+ *     - Images
+ *     responses:
+ *       "200":
+ *         description: Success.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Image"
+ *       "400":
+ *         description: Invalid request body.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       "500":
+ *         description: Error uploading to S3 or writing to DB.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             $ref: "#/components/schemas/ImageSubmissionForm"
+ *           encoding:
+ *             image:
+ *               contentType: image/*
+ */
 imageRouter.post(
   '/',
   upload.single('image'),
@@ -112,6 +149,41 @@ imageRouter.post(
 
 // Gets all non-validated images that have not been used for games
 // (just data, not actual images). Admin-only.
+/**
+ * @swagger
+ *
+ * /api/v1/images/:
+ *   get:
+ *     summary: Gets all non-validated images.
+ *     tags:
+ *     - Images
+ *     security:
+ *     - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: Success.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 images:
+ *                   type: array
+ *                   items:
+ *                     $ref: "#/components/schemas/Image"
+ *       "401":
+ *         description: Missing auth token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       "500":
+ *         description: Error fetching images.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ */
 imageRouter.get(
   '/',
   adminAuthMiddleware,
@@ -153,6 +225,44 @@ imageRouter.get(
 )
 
 // Route to generate a presigned URL for getting a specific image from s3 by ID.
+/**
+ * @swagger
+ *
+ * /api/v1/images/{imageId}/url:
+ *   get:
+ *     summary: Fetches a signed URL for an image by its ID.
+ *     tags:
+ *     - Images
+ *     parameters:
+ *     - in: path
+ *       name: imageId
+ *       schema:
+ *         type: integer
+ *       required: true
+ *       description: ID of the image to fetch a signed URL for.
+ *     responses:
+ *       "200":
+ *         description: Success.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 signedUrl:
+ *                   type: string
+ *       "400":
+ *         description: Invalid image ID.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       "500":
+ *         description: Error getting image key or fetching signed URL.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ */
 imageRouter.get(
   '/:imageId/url',
   async (
@@ -175,10 +285,10 @@ imageRouter.get(
 
     if (!imageKey)
       return (
-        res.status(500).send({ error: "Couldn't get image key." }), undefined
+        res.status(404).send({ error: `Image with ID ${imageId} not found.` }),
+        undefined
       )
 
-    console.log(imageKey)
     try {
       const signedUrl = await generateGetSignedUrl(imageKey.fileLocation, 60000)
       res.status(200).send({ signedUrl })
