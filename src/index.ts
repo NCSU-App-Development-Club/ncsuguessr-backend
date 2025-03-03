@@ -12,6 +12,7 @@ import { gameRouter } from './routes/game'
 import { imageRouter } from './routes/image'
 import swaggerUi from 'swagger-ui-express'
 import { swaggerSpec } from './swagger'
+import path from 'path'
 
 // the primary construct representing the app--routes and middleware will be added using `app`
 const app = express()
@@ -31,7 +32,17 @@ app.get('/', async (req, res) => {
   res.send('Hello')
 })
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)) // Swagger UI
+const swaggerUiOptions = {
+  customCssUrl: '/hideTopbar.css',
+}
+
+app.use(express.static(path.join(__dirname, 'static')))
+
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, swaggerUiOptions)
+) // Swagger UI
 // TODO: need to protect admin routes with a token
 
 app.use('/api/v1/games', gameRouter)
