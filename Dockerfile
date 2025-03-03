@@ -11,4 +11,6 @@ COPY src src
 EXPOSE 3000
 
 RUN npm run build
+
+COPY src/static/ /usr/src/app/dist/static
 CMD ["npm", "run", "start"]

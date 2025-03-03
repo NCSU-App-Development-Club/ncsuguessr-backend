@@ -9,7 +9,11 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { DeployEnv, getDeployEnv } from '.'
 import { Readable } from 'stream'
 
-const s3 = new S3Client()
+const s3 = new S3Client({
+  // Use this config if trying to run express in docker compose
+  // endpoint: 'http://localstack:4566',
+  // forcePathStyle: true,
+})
 
 const s3BucketName = process.env.S3_BUCKET_NAME
 if (s3BucketName === undefined) {
