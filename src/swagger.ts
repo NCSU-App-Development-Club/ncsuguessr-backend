@@ -16,6 +16,35 @@ const options = {
           scheme: 'bearer',
         },
       },
+      schemas: {
+        ImageSubmissionForm: {
+          type: 'object',
+          required: [
+            'latitude',
+            'longitude',
+            'description',
+            'taken-at',
+            'location-name',
+          ],
+          proerties: {
+            latitude: {
+              type: 'string',
+            },
+            longitude: {
+              type: 'string',
+            },
+            description: {
+              type: 'string',
+            },
+            'taken-at': {
+              type: 'string',
+            },
+            'location-name': {
+              type: 'string',
+            },
+          },
+        },
+      },
     },
   },
   apis: ['./src/routes/*.ts'],

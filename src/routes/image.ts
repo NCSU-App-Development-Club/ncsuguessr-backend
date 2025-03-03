@@ -42,6 +42,31 @@ export const imageRouter = express.Router()
 // Takes an image in the body, uploads it to s3, and adds it to the database.
 // If s3 put fails, nothing is written to db. If s3 put succeeds and db write
 // fails, attempts delete object from s3.
+/**
+ * @swagger
+ *
+ * /images/:
+ *   post:
+ *     summary: Endpoint for submitting a new unvalidated image for review.
+ *     responses:
+ *       "200":
+ *         description: Success.
+ *       "400":
+ *         description: "Bad request - invalid request body."
+ *       "500":
+ *         description: Error uploading to S3 or writing to DB.
+ *     requestBody:
+ *       description: Optional description in *Markdown*
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/dto/ImageSubmissionFormType"
+ *         image/*:
+ *           schema:
+ *             type: string
+ *             format: binary
+ */
 imageRouter.post(
   '/',
   upload.single('image'),
