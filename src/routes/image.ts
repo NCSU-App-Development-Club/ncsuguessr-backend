@@ -54,10 +54,22 @@ export const imageRouter = express.Router()
  *     responses:
  *       "200":
  *         description: Success.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Image"
  *       "400":
  *         description: Invalid request body.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
  *       "500":
  *         description: Error uploading to S3 or writing to DB.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
  *     requestBody:
  *       required: true
  *       content:
@@ -146,11 +158,27 @@ imageRouter.post(
  *     responses:
  *       "200":
  *         description: Success.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 images:
+ *                   type: array
+ *                   items:
+ *                     $ref: "#/components/schemas/Image"
  *       "401":
  *         description: Missing auth token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
  *       "500":
  *         description: Error fetching images.
- *
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
  */
 imageRouter.get(
   '/',
@@ -209,10 +237,25 @@ imageRouter.get(
  *     responses:
  *       "200":
  *         description: Success.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 signedUrl:
+ *                   type: string
  *       "400":
  *         description: Invalid image ID.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
  *       "500":
  *         description: Error getting image key or fetching signed URL.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
  */
 imageRouter.get(
   '/:imageId/url',

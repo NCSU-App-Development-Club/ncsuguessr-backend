@@ -1,5 +1,8 @@
 import swaggerJSDoc from 'swagger-jsdoc'
 
+import { ImageSubmissionForm, Image } from './schemas/image'
+import { Error } from './schemas'
+
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -17,38 +20,9 @@ const options = {
         },
       },
       schemas: {
-        ImageSubmissionForm: {
-          type: 'object',
-          required: [
-            'latitude',
-            'longitude',
-            'description',
-            'takenAt',
-            'locationName',
-            'image',
-          ],
-          properties: {
-            latitude: {
-              type: 'string',
-            },
-            longitude: {
-              type: 'string',
-            },
-            description: {
-              type: 'string',
-            },
-            takenAt: {
-              type: 'string',
-            },
-            locationName: {
-              type: 'string',
-            },
-            image: {
-              type: 'string',
-              format: 'binary',
-            },
-          },
-        },
+        ImageSubmissionForm,
+        Image,
+        Error,
       },
     },
   },
