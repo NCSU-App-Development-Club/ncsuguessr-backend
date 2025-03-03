@@ -34,3 +34,16 @@ export const camelToSnake = (str: string): string => {
 export const kebabToSnake = (str: string): string => {
   return str.replace(/-/g, '_')
 }
+
+export const isValidAuthHeader = (authHeader: string): boolean => {
+  // authorization header should be of the form `Bearer {token}`
+  if (!authHeader?.startsWith('Bearer ')) {
+    return false
+  }
+
+  const receivedToken = authHeader.slice(7)
+
+  const trueToken = getAdminSecretToken()
+
+  return receivedToken === trueToken
+}
