@@ -2,16 +2,19 @@ import express, { Request, Response } from 'express'
 import multer, { FileFilterCallback } from 'multer'
 import {
   getImage,
+  getImages,
   getUnvalidatedImages,
+  getValidatedImages,
   insertImage,
 } from '../repository/image'
 import { ImageRowType, NewImageType, ImageRowsType } from '../models/image'
-import { toCamelCaseBody } from '../util/routes'
 import { deleteFromS3, generateGetSignedUrl, putToS3 } from '../util/s3'
 import { randomUUID } from 'node:crypto'
 import { adminAuthMiddleware } from '../middleware/auth'
 import {
   ErrorResponseBodyType,
+  GetImagesSearchParams,
+  GetImagesSearchParamsType,
   ImageSubmissionForm,
   ImageSubmissionFormType,
 } from '../dto'
@@ -73,7 +76,7 @@ imageRouter.post(
   camelCaseBodyMiddleware,
   async (
     req: Request<{}, {}, ImageSubmissionFormType>,
-    res: Response<ImageRowType | ErrorResponseBodyType>
+    res: Response<{ image: ImageRowType } | ErrorResponseBodyType>
   ) => {
     if (!req.file) {
       return (
@@ -115,7 +118,7 @@ imageRouter.post(
 
     try {
       const result = await insertImage(newImage)
-      return res.status(200).send(result), undefined
+      return res.status(200).send({ image: result }), undefined
     } catch (e) {
       logger.error(`error inserting image into db: ${e}`)
     }
@@ -155,15 +158,38 @@ imageRouter.get(
   '/',
   adminAuthMiddleware,
   async (
-    req: Request<{}, {}, {}>,
+    req: Request<
+      {},
+      {},
+      {},
+      {
+        validated: string
+      }
+    >,
     res: Response<{ images: ImageRowsType } | ErrorResponseBodyType>
   ) => {
+    const parsedSearchParams = GetImagesSearchParams.safeParse(req.query)
+    if (parsedSearchParams.error) {
+      return res.status(400).send({ error: 'invalid query params' }), undefined
+    }
+
     try {
-      const unvalidatedImages = await getUnvalidatedImages()
-      res.status(200).send({ images: unvalidatedImages })
+      let images
+      if (parsedSearchParams.data.validated === undefined) {
+        images = await getImages()
+        return res.status(200).send({ images }), undefined
+      } else if (parsedSearchParams.data.validated) {
+        images = await getValidatedImages()
+      } else {
+        images = await getUnvalidatedImages()
+      }
+      return res.status(200).send({ images }), undefined
     } catch (e) {
       logger.error(`error fetching unvalidated images: ${e}`)
-      res.status(500).send({ error: 'Failed to fetch unvalidated images.' })
+      return (
+        res.status(500).send({ error: 'Failed to fetch unvalidated images.' }),
+        undefined
+      )
     }
   }
 )

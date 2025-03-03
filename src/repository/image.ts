@@ -56,3 +56,17 @@ export const getUnvalidatedImages = async (): Promise<ImageRowsType> => {
 
   return ImageRows.parse(unvalidatedImages)
 }
+
+// admin
+export const getValidatedImages = async (): Promise<ImageRowsType> => {
+  const validatedImages = await sql`SELECT * FROM images WHERE validated = true`
+
+  return ImageRows.parse(validatedImages)
+}
+
+// admin
+export const getImages = async (): Promise<ImageRowsType> => {
+  const Images = await sql`SELECT * FROM images`
+
+  return ImageRows.parse(Images)
+}
