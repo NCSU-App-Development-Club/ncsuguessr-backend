@@ -109,6 +109,23 @@ imageRouter.post(
 
 // Gets all non-validated images that have not been used for games
 // (just data, not actual images). Admin-only.
+/**
+ * @swagger
+ *
+ * /images/:
+ *   get:
+ *     summary: Gets all non-validated images.
+ *     security:
+ *     - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: Success.
+ *       "401":
+ *         description: Missing auth token.
+ *       "500":
+ *         description: Error fetching images.
+ *
+ */
 imageRouter.get(
   '/',
   adminAuthMiddleware,

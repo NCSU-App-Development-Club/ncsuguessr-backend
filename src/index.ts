@@ -10,6 +10,8 @@ import { DeployEnv, getDeployEnv } from './util'
 import { logger } from './util'
 import { gameRouter } from './routes/game'
 import { imageRouter } from './routes/image'
+import swaggerUi from 'swagger-ui-express'
+import { swaggerSpec } from './swagger'
 
 // the primary construct representing the app--routes and middleware will be added using `app`
 const app = express()
@@ -29,6 +31,7 @@ app.get('/', async (req, res) => {
   res.send('Hello')
 })
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec)) // Swagger UI
 // TODO: need to protect admin routes with a token
 
 app.use('/games', gameRouter)
