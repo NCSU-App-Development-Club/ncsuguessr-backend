@@ -4,6 +4,7 @@ import {
   GameDatesType,
   GameRow,
   GameRows,
+  GameRowsType,
   GameRowType,
   NewGameType,
 } from '../models/game'
@@ -25,26 +26,26 @@ export const insertGame = async (game: NewGameType): Promise<GameRowType> => {
   return GameRow.parse(inserted)
 }
 
-export const getGameByDate = async (
-  date: Date
-): Promise<GameRowType | null> => {
+export const getGamesByDate = async (date: Date): Promise<GameRowsType> => {
   const games = await sql`SELECT * FROM games WHERE date = ${date}`
 
-  if (games.length === 0) {
-    return null
-  }
-
-  return GameRow.parse(games[0])
-}
-
-export const getGameDates = async (): Promise<GameDatesType> => {
-  const dates = await sql`SELECT date FROM games`
-
-  return GameDates.parse(dates)
+  return GameRows.parse(games)
 }
 
 export const getGames = async (): Promise<GameRowType[]> => {
   const games = await sql`SELECT * FROM GAMES`
 
   return GameRows.parse(games)
+}
+
+export const getGameById = async (
+  gameId: number
+): Promise<GameRowType | null> => {
+  const foundGames = await sql`SELECT * from games WHERE id = ${gameId}`
+
+  if (foundGames.length === 0) {
+    return null
+  }
+
+  return GameRow.parse(foundGames[0])
 }

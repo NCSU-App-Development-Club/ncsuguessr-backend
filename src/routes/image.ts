@@ -6,7 +6,6 @@ import {
   insertImage,
 } from '../repository/image'
 import { ImageRowType, NewImageType, ImageRowsType } from '../models/image'
-import { toCamelCaseBody } from '../util/routes'
 import { deleteFromS3, generateGetSignedUrl, putToS3 } from '../util/s3'
 import { randomUUID } from 'node:crypto'
 import { adminAuthMiddleware } from '../middleware/auth'
@@ -48,7 +47,7 @@ imageRouter.post(
   camelCaseBodyMiddleware,
   async (
     req: Request<{}, {}, ImageSubmissionFormType>,
-    res: Response<ImageRowType | ErrorResponseBodyType>
+    res: Response<{ image: ImageRowType } | ErrorResponseBodyType>
   ) => {
     if (!req.file) {
       return (
@@ -90,7 +89,7 @@ imageRouter.post(
 
     try {
       const result = await insertImage(newImage)
-      return res.status(200).send(result), undefined
+      return res.status(200).send({ image: result }), undefined
     } catch (e) {
       logger.error(`error inserting image into db: ${e}`)
     }
@@ -107,6 +106,7 @@ imageRouter.post(
   }
 )
 
+// TODO: make this return all images by default, and add a query param for ?validated=false
 // Gets all non-validated images that have not been used for games
 // (just data, not actual images). Admin-only.
 imageRouter.get(

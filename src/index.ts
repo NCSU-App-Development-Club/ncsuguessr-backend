@@ -5,7 +5,7 @@ config({})
 import bodyParser from 'body-parser'
 import express from 'express'
 import { createAllTables } from './repository'
-import { createBucket, putToS3 } from './util/s3'
+import { createBucket } from './util/s3'
 import { DeployEnv, getDeployEnv } from './util'
 import { logger } from './util'
 import { gameRouter } from './routes/game'
