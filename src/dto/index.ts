@@ -28,6 +28,17 @@ export const GetGamesSearchParams = z.object({
 
 export type GetGamesSearchParamsType = z.infer<typeof GetGamesSearchParams>
 
+export const GetImagesSearchParams = z.object({
+  validated: z
+    .string()
+    .optional()
+    .transform((val) =>
+      val === 'true' ? true : val === 'false' ? false : undefined
+    ),
+})
+
+export type GetImagesSearchParamsType = z.infer<typeof GetImagesSearchParams>
+
 export const ErrorResponseBody = z.object({
   error: z.string(),
 })
