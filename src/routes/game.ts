@@ -20,6 +20,45 @@ import { generateGetSignedUrl } from '../util/s3'
 export const gameRouter = express.Router()
 
 // create a game, given a date and an image id (admin)
+/**
+ * @swagger
+ *
+ * /api/v1/games/:
+ *   post:
+ *     summary: Creates a new game given a data and image ID.
+ *     tags:
+ *     - Games
+ *     security:
+ *     - bearerAuth: []
+ *     responses:
+ *       "200":
+ *         description: Success.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Game"
+ *       "400":
+ *         description: Invalid request body.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       "500":
+ *         description: Error writing to DB.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             $ref: "#/components/schemas/CreateGame"
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/CreateGame"
+ */
 gameRouter.post(
   '/',
   adminAuthMiddleware,
@@ -31,7 +70,7 @@ gameRouter.post(
 
     if (parsedBody.error) {
       return (
-        res.status(400).send({ error: `${parsedBody.error.message}` }),
+        res.status(400).send({ error: JSON.parse(parsedBody.error.message) }),
         undefined
       )
     }
@@ -64,6 +103,52 @@ gameRouter.post(
   }
 )
 
+/**
+ * @swagger
+ *
+ * /api/v1/games/:
+ *   get:
+ *     summary: Fetches games with an optional date filter as a query parameter.
+ *     tags:
+ *     - Games
+ *     parameters:
+ *     - in: query
+ *       name: date
+ *       schema:
+ *         type: string
+ *         format: date
+ *       description: An optional date to filter games by.
+ *     responses:
+ *       "200":
+ *         description: Success.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 games:
+ *                   type: array
+ *                   items:
+ *                     $ref: "#/components/schemas/Game"
+ *       "400":
+ *         description: Invalid request body.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       "404":
+ *         description: Game not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       "500":
+ *         description: Error writing to DB.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ */
 gameRouter.get(
   '/',
   async (
@@ -84,7 +169,7 @@ gameRouter.get(
     if (parsedSearchParams.error) {
       return (
         res.status(400).send({
-          error: `invalid search params: ${parsedSearchParams.error.message}`,
+          error: JSON.parse(parsedSearchParams.error.message),
         }),
         undefined
       )
@@ -115,6 +200,52 @@ gameRouter.get(
   }
 )
 
+/**
+ * @swagger
+ *
+ * /api/v1/games/{gameId}:
+ *   get:
+ *     summary: Fetches a game by its ID.
+ *     tags:
+ *     - Games
+ *     parameters:
+ *     - in: path
+ *       name: gameId
+ *       schema:
+ *         type: integer
+ *       description: The ID of the game to fetch.
+ *     responses:
+ *       "200":
+ *         description: Success.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 game:
+ *                   $ref: "#/components/schemas/Game"
+ *                 imageUrl:
+ *                   type: string
+ *                   format: url
+ *       "400":
+ *         description: Invalid request body.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       "404":
+ *         description: Game not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ *       "500":
+ *         description: Error writing to DB.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Error"
+ */
 gameRouter.get(
   '/:gameId',
   async (

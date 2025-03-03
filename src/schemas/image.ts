@@ -11,9 +11,11 @@ export const ImageSubmissionForm = {
   properties: {
     latitude: {
       type: 'string',
+      format: 'number',
     },
     longitude: {
       type: 'string',
+      format: 'number',
     },
     description: {
       type: 'string',

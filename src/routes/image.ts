@@ -51,6 +51,8 @@ export const imageRouter = express.Router()
  * /api/v1/images/:
  *   post:
  *     summary: Submits a new unvalidated image for review.
+ *     tags:
+ *     - Images
  *     responses:
  *       "200":
  *         description: Success.
@@ -153,6 +155,8 @@ imageRouter.post(
  * /api/v1/images/:
  *   get:
  *     summary: Gets all non-validated images.
+ *     tags:
+ *     - Images
  *     security:
  *     - bearerAuth: []
  *     responses:
@@ -227,6 +231,8 @@ imageRouter.get(
  * /api/v1/images/{imageId}/url:
  *   get:
  *     summary: Fetches a signed URL for an image by its ID.
+ *     tags:
+ *     - Images
  *     parameters:
  *     - in: path
  *       name: imageId
