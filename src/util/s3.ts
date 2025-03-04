@@ -4,6 +4,7 @@ import {
   CreateBucketCommand,
   PutObjectCommand,
   DeleteObjectCommand,
+  PutObjectCommandInput,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { DeployEnv, getDeployEnv } from '.'
@@ -51,13 +52,18 @@ export const generateGetSignedUrl = async (
 
 export const putToS3 = async (
   key: string,
-  content: string | Uint8Array | Buffer | Readable
+  content: string | Uint8Array | Buffer | Readable,
+  contentType?: string
 ) => {
-  const command = new PutObjectCommand({
+  const config: PutObjectCommandInput = {
     Bucket: s3BucketName,
     Key: key,
     Body: content,
-  })
+  }
+
+  if (contentType) config.ContentType = contentType
+
+  const command = new PutObjectCommand(config)
 
   await s3.send(command)
 }

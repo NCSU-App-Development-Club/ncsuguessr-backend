@@ -20,6 +20,7 @@ import {
 } from '../dto'
 import { logger } from '../util'
 import { camelCaseBodyMiddleware } from '../middleware/transform'
+import { convertToJpg, getImageExtension } from '../util/image'
 
 const fileFilter = (
   req: Request,
@@ -98,6 +99,7 @@ imageRouter.post(
         undefined
       )
     }
+    console.log(req.file)
     const parsedImageBody = ImageSubmissionForm.safeParse(req.body)
     if (parsedImageBody.error) {
       return (
@@ -108,11 +110,20 @@ imageRouter.post(
       )
     }
 
-    const fileLocation = randomUUID().trim()
+    let fileExtension = getImageExtension(req.file.mimetype)
+    let imageBuffer: Buffer = req.file.buffer
 
+    if (req.file.mimetype === 'image/heic') {
+      fileExtension = '.jpg'
+      imageBuffer = Buffer.from(await convertToJpg(req.file.buffer))
+    }
+
+    const fileLocation = randomUUID().trim() + fileExtension
+    const contentType =
+      req.file.mimetype === 'image/heic' ? 'image/jpeg' : req.file.mimetype
     // Add to S3
     try {
-      await putToS3(fileLocation, req.file.buffer)
+      await putToS3(fileLocation, imageBuffer, contentType)
     } catch (e) {
       logger.error(`error uploading to s3: ${e}`)
       return (
