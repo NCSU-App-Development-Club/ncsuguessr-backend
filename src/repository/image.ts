@@ -11,7 +11,7 @@ import {
 export const createImagesTable = async () => {
   await sql`CREATE TABLE IF NOT EXISTS images (
     id SERIAL PRIMARY KEY,
-    file_location CHAR(36) NOT NULL,
+    file_location VARCHAR(50) NOT NULL,
     latitude DOUBLE PRECISION NOT NULL,
     longitude DOUBLE PRECISION NOT NULL,
     description TEXT NOT NULL,
