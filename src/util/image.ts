@@ -10,6 +10,8 @@ export const getImageExtension = (mimetype: string) => {
       return '.png'
     case 'image/heic':
       return '.heic'
+    case 'image/heif':
+      return '.heif'
     default:
       return null
   }
