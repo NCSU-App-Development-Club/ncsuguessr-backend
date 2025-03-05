@@ -113,14 +113,15 @@ imageRouter.post(
     let fileExtension = getImageExtension(req.file.mimetype)
     let imageBuffer: Buffer = req.file.buffer
 
-    if (req.file.mimetype === 'image/heic') {
+    if (['image/heic', 'image/heif'].includes(req.file.mimetype)) {
       fileExtension = '.jpg'
       imageBuffer = Buffer.from(await convertToJpg(req.file.buffer))
     }
 
     const fileLocation = randomUUID().trim() + fileExtension
-    const contentType =
-      req.file.mimetype === 'image/heic' ? 'image/jpeg' : req.file.mimetype
+    const contentType = ['image/heic', 'image/heif'].includes(req.file.mimetype)
+      ? 'image/jpeg'
+      : req.file.mimetype
     // Add to S3
     try {
       await putToS3(fileLocation, imageBuffer, contentType)
