@@ -99,7 +99,7 @@ imageRouter.post(
         undefined
       )
     }
-    console.log(req.file)
+
     const parsedImageBody = ImageSubmissionForm.safeParse(req.body)
     if (parsedImageBody.error) {
       return (
