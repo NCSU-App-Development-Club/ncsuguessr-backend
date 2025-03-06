@@ -113,6 +113,16 @@ imageRouter.post(
     let fileExtension = getImageExtension(req.file.mimetype)
     let imageBuffer: Buffer = req.file.buffer
 
+    if (!fileExtension) {
+      return (
+        res.status(400).send({
+          error:
+            'Invalid body: Invalid image type. Supported types include: .jpg, .jpeg, .png, .heic, .heif',
+        }),
+        undefined
+      )
+    }
+
     if (['image/heic', 'image/heif'].includes(req.file.mimetype)) {
       fileExtension = '.jpg'
       imageBuffer = Buffer.from(await convertToJpg(req.file.buffer))
